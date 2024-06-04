@@ -1,0 +1,40 @@
+pipeline {    agent any
+    stages {
+        stage('stage-1') {            
+            steps {
+                git branch: 'main', url: 'https://github.com/meenigenikhitha/project-1-maven-jenkins-CICD-docker-eks-.git'            
+                
+            }
+        }   
+        stage('clean') {           
+            steps {
+              sh  'mvn clean'           
+              }
+        }        
+        stage('test') {
+            steps {              
+                sh  'mvn test'
+            }
+        }
+        stage('install') {            
+            steps {
+               sh  'mvn install'            
+                
+            }
+        }        
+        stage('deployment') {
+            steps {                
+            deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://65.1.248.87:8080')], contextPath: null, war: '**/*.war'          
+            }
+        }
+    }
+}
+
+
+# in deployer we can give contextpath 'test' (instead of giving null)
+#while doing pipeline script for tomcat should give deploy to war,ear option
+#select **/*.war
+#give credentials
+#select tomcat 9.x
+#tomcat url means http://publicip:8080
+#generate pipeline script copy that and paste that url in deployer line in cript
